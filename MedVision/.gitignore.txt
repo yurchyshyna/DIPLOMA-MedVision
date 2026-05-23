@@ -1,0 +1,30 @@
+# Visual Studio / .NET
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Node / React
+node_modules/
+dist/
+build/
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Database / local files
+*.db
+*.bak
+
+# Images / datasets
+uploads/
+datasets/
+*.dcm
+
+# Secrets
+appsettings.Development.json
