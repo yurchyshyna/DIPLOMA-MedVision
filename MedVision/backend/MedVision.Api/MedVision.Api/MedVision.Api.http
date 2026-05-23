@@ -1,0 +1,6 @@
+@MedVision.Api_HostAddress = http://localhost:5139
+
+GET {{MedVision.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
