@@ -1,0 +1,298 @@
+
+body {
+  margin: 0;
+  padding: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      #d6e0e8,
+      #bfd1df,
+      #a8c3d8
+    );
+
+  min-height: 100vh;
+
+  font-family: "Inter", sans-serif;
+
+  color: #0b2e59;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* NAVBAR */
+
+.navbar {
+  background:
+    linear-gradient(
+      90deg,
+      #0b2e59,
+      #2f75b5
+    ) !important;
+
+  padding-top: 18px;
+  padding-bottom: 18px;
+
+  box-shadow:
+    0 4px 20px rgba(11,46,89,0.15);
+}
+
+.navbar-brand {
+  color: white !important;
+
+  font-size: 2rem;
+
+  letter-spacing: -1px;
+}
+
+/* CARDS */
+
+.card {
+  background: rgba(255,255,255,0.72) !important;
+
+  backdrop-filter: blur(14px);
+
+  border: none !important;
+
+  border-radius: 28px !important;
+
+  box-shadow:
+    0 10px 30px rgba(11,46,89,0.08);
+
+  color: #0b2e59;
+}
+
+/* TITLES */
+
+.text-primary {
+  color: #2f75b5 !important;
+}
+
+/* MUTED TEXT */
+
+.text-muted {
+  color: #5b7c99 !important;
+}
+
+/* INPUT */
+
+.form-control {
+  background: rgba(255,255,255,0.9) !important;
+
+  border: 2px solid #d6e0e8 !important;
+
+  border-radius: 14px !important;
+
+  color: #0b2e59 !important;
+
+  padding: 12px;
+}
+
+.form-control:focus {
+  border-color: #69a9d5 !important;
+
+  box-shadow:
+    0 0 0 0.2rem rgba(105,169,213,0.18) !important;
+}
+
+/* BUTTON */
+
+.btn-primary {
+  border: none !important;
+
+  border-radius: 14px !important;
+
+  padding: 12px 20px;
+
+  font-weight: 600;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2f75b5,
+      #69a9d5
+    ) !important;
+}
+
+.btn-primary:hover {
+  opacity: 0.95;
+}
+
+/* SECONDARY BUTTON */
+
+.btn-outline-primary {
+  border-radius: 14px !important;
+
+  border: 2px solid #69a9d5 !important;
+
+  color: #2f75b5 !important;
+}
+
+.btn-outline-primary:hover {
+  background: #69a9d5 !important;
+
+  color: white !important;
+}
+
+/* TABLE */
+
+.table-responsive {
+  max-height: 650px;
+
+  overflow-y: auto;
+
+  border-radius: 18px;
+}
+
+.table {
+  color: #0b2e59 !important;
+
+  margin-bottom: 0;
+}
+
+.table thead th {
+  color: #2f75b5 !important;
+
+  border-bottom:
+    2px solid #d6e0e8 !important;
+
+  background: rgba(255,255,255,0.4);
+}
+
+.table td {
+  border-color:
+    rgba(11,46,89,0.05) !important;
+
+  vertical-align: middle;
+
+  background: transparent !important;
+}
+
+.table tbody tr {
+  transition: 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background:
+    rgba(105,169,213,0.08) !important;
+}
+
+/* ALERTS */
+
+.alert-danger {
+  background:
+    rgba(255,240,240,0.9) !important;
+
+  border:
+    1px solid rgba(220,38,38,0.15) !important;
+
+  color: #7f1d1d !important;
+
+  border-radius: 18px;
+}
+
+.alert-success {
+  background:
+    rgba(240,255,245,0.9) !important;
+
+  border:
+    1px solid rgba(16,185,129,0.15) !important;
+
+  color: #065f46 !important;
+
+  border-radius: 18px;
+}
+
+.alert-secondary {
+  background:
+    rgba(255,255,255,0.55) !important;
+
+  border:
+    1px solid rgba(11,46,89,0.05) !important;
+
+  color: #0b2e59 !important;
+
+  border-radius: 18px;
+}
+
+/* BADGES */
+
+.badge {
+  border-radius: 12px !important;
+
+  padding: 8px 12px;
+
+  font-size: 0.9rem;
+}
+
+.badge.bg-danger {
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444,
+      #dc2626
+    ) !important;
+}
+
+.badge.bg-success {
+  background:
+    linear-gradient(
+      135deg,
+      #10b981,
+      #059669
+    ) !important;
+}
+
+/* PROGRESS */
+
+.progress {
+  height: 12px !important;
+
+  background:
+    rgba(11,46,89,0.08) !important;
+
+  border-radius: 20px;
+}
+
+.progress-bar {
+  border-radius: 20px;
+}
+
+/* IMAGES */
+
+img {
+  border-radius: 22px;
+
+  transition: 0.3s ease;
+}
+
+img:hover {
+  transform: scale(1.01);
+}
+
+/* FOOTER */
+
+footer {
+  background: transparent !important;
+
+  color: #5b7c99 !important;
+}
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a8c3d8;
+
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+

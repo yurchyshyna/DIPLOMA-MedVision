@@ -13,4 +13,11 @@ public class XrayAnalysisResponseDto
     public string Conclusion { get; set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; }
+
+    public string? HeatmapPath { get; set; }
+
+    public string? DetectionsJson { get; set; }
+
+    public List<DetectionDto> Detections { get; set; } = new();
+    public string? PreviewPath { get; set; }
 }

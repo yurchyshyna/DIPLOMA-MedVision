@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37314.3 d17.14
+VisualStudioVersion = 17.14.37314.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedVision.Api", "MedVision.Api\MedVision.Api.csproj", "{FB708C8B-C111-4C80-BA62-FA8FDB684E45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedVision.Tests", "MedVision.Tests\MedVision.Tests.csproj", "{AA964FF4-0C27-4EB7-AA12-24375659CE74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{FB708C8B-C111-4C80-BA62-FA8FDB684E45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB708C8B-C111-4C80-BA62-FA8FDB684E45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB708C8B-C111-4C80-BA62-FA8FDB684E45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA964FF4-0C27-4EB7-AA12-24375659CE74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA964FF4-0C27-4EB7-AA12-24375659CE74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA964FF4-0C27-4EB7-AA12-24375659CE74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA964FF4-0C27-4EB7-AA12-24375659CE74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

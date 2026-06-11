@@ -13,5 +13,11 @@
         public string Conclusion { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public string? HeatmapPath { get; set; }
+
+        public string? DetectionsJson { get; set; }
+
+        public string? PreviewPath { get; set; }
     }
 }

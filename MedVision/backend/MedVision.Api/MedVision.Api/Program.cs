@@ -8,6 +8,16 @@ namespace MedVision.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactClient", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -31,12 +41,14 @@ namespace MedVision.Api
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCors("AllowReactClient");
             app.UseAuthorization();
-
 
             app.MapControllers();
 
             app.Run();
         }
     }
+
+
 }

@@ -3,6 +3,7 @@ using MedVision.Api.DTOs;
 using MedVision.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MedVision.Api.DTOs;
 
 namespace MedVision.Api.Controllers;
 
@@ -32,12 +33,14 @@ public class XrayAnalysisController : ControllerBase
             return BadRequest("Файл не було завантажено.");
         }
 
-        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+        var allowedExtensions = new[] { ".jpg",".jpeg",".png",".dcm",".dicom"};
+    
+
         var extension = Path.GetExtension(file.FileName).ToLower();
 
         if (!allowedExtensions.Contains(extension))
         {
-            return BadRequest("Дозволені лише файли JPG, JPEG або PNG.");
+            return BadRequest("Дозволені лише файли JPG, JPEG, PNG або DICOM.");
         }
 
         var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
@@ -54,15 +57,6 @@ public class XrayAnalysisController : ControllerBase
         {
             await file.CopyToAsync(stream);
         }
-
-        // Тимчасова імітація AI-аналізу
-        //var random = new Random();
-        //var probability = Math.Round(random.NextDouble() * 100, 2);
-
-        //var resultClass = probability > 50 ? "Pathology detected" : "Normal";
-        //var conclusion = probability > 50
-        //    ? "На знімку виявлено ознаки можливої патології легень."
-        //    : "Ознак патології легень не виявлено.";
 
         var client = _httpClientFactory.CreateClient();
 
@@ -96,13 +90,20 @@ public class XrayAnalysisController : ControllerBase
         var resultClass = prediction.ResultClass;
         var conclusion = prediction.Conclusion;
 
+        var detectionsJson =
+        System.Text.Json.JsonSerializer.Serialize(
+        prediction.Detections );
+
         var analysis = new XrayAnalysis
         {
             ImagePath = $"/uploads/{uniqueFileName}",
             ResultClass = resultClass,
             Probability = probability,
             Conclusion = conclusion,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            HeatmapPath = prediction.HeatmapPath,
+            DetectionsJson = detectionsJson,
+            PreviewPath = prediction.PreviewPath,
         };
 
         _context.XrayAnalyses.Add(analysis);
@@ -111,11 +112,23 @@ public class XrayAnalysisController : ControllerBase
         var response = new XrayAnalysisResponseDto
         {
             Id = analysis.Id,
+
             ImagePath = analysis.ImagePath,
+
             ResultClass = analysis.ResultClass,
+
             Probability = analysis.Probability,
+
             Conclusion = analysis.Conclusion,
-            CreatedAt = analysis.CreatedAt
+
+            CreatedAt = analysis.CreatedAt,
+
+            HeatmapPath = analysis.HeatmapPath,
+
+            DetectionsJson = analysis.DetectionsJson,
+            PreviewPath = analysis.PreviewPath,
+            Detections = prediction.Detections
+
         };
 
         return Ok(response);
@@ -133,11 +146,28 @@ public class XrayAnalysisController : ControllerBase
                 ResultClass = x.ResultClass,
                 Probability = x.Probability,
                 Conclusion = x.Conclusion,
-                CreatedAt = x.CreatedAt
+                CreatedAt = x.CreatedAt,
+                HeatmapPath = x.HeatmapPath,
+                DetectionsJson = x.DetectionsJson,
             })
             .ToListAsync();
 
         return Ok(analyses);
+    }
+
+    [HttpDelete("clear")]
+    public async Task<IActionResult> ClearHistory()
+    {
+        var analyses = await _context.XrayAnalyses.ToListAsync();
+
+        _context.XrayAnalyses.RemoveRange(analyses);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Історію очищено"
+        });
     }
 
     [HttpGet("{id}")]
@@ -157,18 +187,13 @@ public class XrayAnalysisController : ControllerBase
             ResultClass = analysis.ResultClass,
             Probability = analysis.Probability,
             Conclusion = analysis.Conclusion,
-            CreatedAt = analysis.CreatedAt
+            CreatedAt = analysis.CreatedAt,
+            HeatmapPath = analysis.HeatmapPath,
+            DetectionsJson = analysis.DetectionsJson,
+
+
         };
 
         return Ok(response);
     }
-}
-
-public class AiPredictionResponse
-{
-    public string ResultClass { get; set; } = string.Empty;
-
-    public double Probability { get; set; }
-
-    public string Conclusion { get; set; } = string.Empty;
 }
