@@ -315,9 +315,26 @@ function App() {
             MedVision
           </span>
 
-          <span className="text-white-50">
-            AI Lung X-ray Analysis
-          </span>
+
+
+
+
+          <div className="text-end">
+
+            <div className="text-white fw-semibold">
+
+              {user.role === "Doctor"
+                ? "👨‍⚕️ Лікар"
+                : "🎓 Студент"}
+
+            </div>
+
+            <small className="text-white-50">
+
+
+            </small>
+
+          </div>
 
           <button
             className="btn btn-outline-light"
@@ -332,6 +349,56 @@ function App() {
         </div>
 
       </nav>
+
+      <div
+        style={{
+          position: "fixed",
+          left: "0",
+          top: "0",
+          width: "70px",
+          height: "100vh",
+          background: "#0d2b45",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1000,
+          boxShadow: "4px 0 15px rgba(0,0,0,0.15)",
+        }}
+      >
+        <div
+          style={{
+            whiteSpace: "pre-line",
+            color: "white",
+            fontWeight: "600",
+            fontSize: "18px",
+            textAlign: "center",
+            lineHeight: "1.4",
+          }}
+        >
+          {`A
+I
+
+L
+u
+n
+g
+
+X
+-
+r
+a
+y
+
+A
+n
+a
+l
+y
+s
+i
+s`}
+        </div>
+      </div>
 
       {/* ANALYSIS MODAL */}
 
@@ -753,13 +820,16 @@ function App() {
 
       {/* MAIN */}
 
-      <main className="container-fluid px-5 py-5">
+      <main className="container-fluid px-5 py-5" >
 
-        <div className="row g-4">
+        <div className="row g-4" style={{
+          paddingLeft: "50px",
+          paddingRight: "50px"
+        }}>
 
           {/* LEFT COLUMN */}
 
-          <div className="col-lg-4">
+          <div className="col-lg-4" >
 
             <div className="card shadow border-0 rounded-4">
 
@@ -1016,7 +1086,7 @@ function App() {
 
           {/* RIGHT COLUMN */}
 
-          <div className="col-lg-8">
+          <div className="col-lg-8" >
 
             <div className="card shadow border-0 rounded-4">
 

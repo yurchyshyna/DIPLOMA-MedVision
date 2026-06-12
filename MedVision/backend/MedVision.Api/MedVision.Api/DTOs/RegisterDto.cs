@@ -1,6 +1,12 @@
-﻿public class RegisterDto
+﻿namespace MedVision.Api.DTOs;
+
+public class RegisterDto
 {
     public string Email { get; set; } = string.Empty;
 
     public string Password { get; set; } = string.Empty;
+
+    public string Role { get; set; } = "Student";
+
+    public string VerificationNumber { get; set; } = string.Empty;
 }

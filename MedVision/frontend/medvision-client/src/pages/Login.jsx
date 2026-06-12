@@ -12,6 +12,13 @@ export default function Login() {
     const [password, setPassword] =
         useState("");
 
+    const [role, setRole] =
+        useState("Student");
+
+    const [verificationNumber,
+        setVerificationNumber] =
+        useState("");
+
     const login = async () => {
 
         try {
@@ -49,6 +56,8 @@ export default function Login() {
                 {
                     email,
                     password,
+                    role,
+                    verificationNumber,
                 }
             );
 
@@ -170,6 +179,60 @@ export default function Login() {
                                 "1px solid #d3e0ea",
                         }}
                     />
+
+                    {isRegister && (
+
+                        <>
+
+                            <select
+                                className="form-control mb-3"
+                                value={role}
+                                onChange={(e) =>
+                                    setRole(e.target.value)
+                                }
+                                style={{
+                                    borderRadius: "15px",
+                                    padding: "14px",
+                                    border:
+                                        "1px solid #d3e0ea",
+                                }}
+                            >
+
+                                <option value="Student">
+                                    🎓 Студент
+                                </option>
+
+                                <option value="Doctor">
+                                    👨‍⚕️ Лікар
+                                </option>
+
+                            </select>
+
+                            <input
+                                type="text"
+                                className="form-control mb-4"
+                                placeholder={
+                                    role === "Doctor"
+                                        ? "DOC-123456"
+                                        : "ST-2025-001"
+                                }
+                                value={verificationNumber}
+                                onChange={(e) =>
+                                    setVerificationNumber(
+                                        e.target.value
+                                    )
+                                }
+                                style={{
+                                    borderRadius: "15px",
+                                    padding: "14px",
+                                    border:
+                                        "1px solid #d3e0ea",
+                                }}
+                            />
+
+                        </>
+
+                    )}
 
                     {/* BUTTON */}
 

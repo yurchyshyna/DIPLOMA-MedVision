@@ -1,5 +1,6 @@
 ﻿using MedVision.Api.Controllers;
 using MedVision.Api.Data;
+using MedVision.Api.DTOs;
 using MedVision.Api.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,8 @@ public class XrayAnalysisControllerTests
 
         context.XrayAnalyses.Add(new XrayAnalysis
         {
-            ResultClass = "Normal"
+            ResultClass = "Normal",
+            UserId = 1
         });
 
         await context.SaveChangesAsync();
@@ -46,7 +48,7 @@ public class XrayAnalysisControllerTests
         var controller = CreateController(context);
 
         var result =
-            await controller.GetHistory();
+            await controller.GetHistory(1);
 
         Assert.IsType<
             OkObjectResult>(
@@ -60,7 +62,8 @@ public class XrayAnalysisControllerTests
 
         var analysis = new XrayAnalysis
         {
-            ResultClass = "Normal"
+            ResultClass = "Normal",
+            UserId = 1
         };
 
         context.XrayAnalyses.Add(analysis);
@@ -100,10 +103,16 @@ public class XrayAnalysisControllerTests
         var context = GetDbContext();
 
         context.XrayAnalyses.Add(
-            new XrayAnalysis());
+            new XrayAnalysis
+            {
+                UserId = 1
+            });
 
         context.XrayAnalyses.Add(
-            new XrayAnalysis());
+            new XrayAnalysis
+            {
+                UserId = 1
+            });
 
         await context.SaveChangesAsync();
 
@@ -114,5 +123,98 @@ public class XrayAnalysisControllerTests
 
         Assert.Empty(
             context.XrayAnalyses);
+    }
+
+    [Fact]
+    public async Task DeleteAnalysis_RemovesRecord()
+    {
+        var context = GetDbContext();
+
+        var analysis = new XrayAnalysis
+        {
+            ResultClass = "Normal",
+            UserId = 1
+        };
+
+        context.XrayAnalyses.Add(analysis);
+
+        await context.SaveChangesAsync();
+
+        var controller =
+            CreateController(context);
+
+        await controller.DeleteAnalysis(
+            analysis.Id,
+            1);
+
+        Assert.Empty(
+            context.XrayAnalyses);
+    }
+
+    [Fact]
+    public async Task DeleteAnalysis_ForeignUser_ReturnsForbid()
+    {
+        var context = GetDbContext();
+
+        var analysis = new XrayAnalysis
+        {
+            ResultClass = "Normal",
+            UserId = 1
+        };
+
+        context.XrayAnalyses.Add(analysis);
+
+        await context.SaveChangesAsync();
+
+        var controller =
+            CreateController(context);
+
+        var result =
+            await controller.DeleteAnalysis(
+                analysis.Id,
+                2);
+
+        Assert.IsType<ForbidResult>(
+            result);
+    }
+
+    [Fact]
+    public async Task GetHistory_ReturnsOnlyCurrentUserRecords()
+    {
+        var context = GetDbContext();
+
+        context.XrayAnalyses.Add(
+            new XrayAnalysis
+            {
+                UserId = 1,
+                ResultClass = "Normal"
+            });
+
+        context.XrayAnalyses.Add(
+            new XrayAnalysis
+            {
+                UserId = 2,
+                ResultClass = "Abnormal"
+            });
+
+        await context.SaveChangesAsync();
+
+        var controller =
+            CreateController(context);
+
+        var result =
+            await controller.GetHistory(1);
+
+        var okResult =
+            Assert.IsType<
+                OkObjectResult>(
+                result.Result);
+
+        var analyses =
+            Assert.IsAssignableFrom<
+                IEnumerable<XrayAnalysisResponseDto>>(
+                    okResult.Value);
+
+        Assert.Single(analyses);
     }
 }

@@ -4,11 +4,21 @@ body {
   padding: 0;
 
   background:
+    radial-gradient(
+      circle at top right,
+      rgba(47,117,181,0.18),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(11,46,89,0.12),
+      transparent 40%
+    ),
     linear-gradient(
       135deg,
-      #d6e0e8,
-      #bfd1df,
-      #a8c3d8
+      #eef5fb,
+      #dce8f3,
+      #c7d7e6
     );
 
   min-height: 100vh;

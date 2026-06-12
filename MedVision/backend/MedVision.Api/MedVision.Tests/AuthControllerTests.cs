@@ -1,8 +1,9 @@
 ﻿using MedVision.Api.Data;
+using MedVision.Api.DTOs;
 using MedVision.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
+using MedVision.Api.Services;
 using Xunit;
 
 public class AuthControllerTests
@@ -17,7 +18,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task Register_NewUser_ReturnsOk()
+    public async Task Register_NewDoctor_ReturnsOk()
     {
         var context = GetDbContext();
 
@@ -25,15 +26,47 @@ public class AuthControllerTests
 
         var dto = new RegisterDto
         {
-            Email = "test@test.com",
-            Password = "123456"
+            Email = "doctor@test.com",
+            Password = "123456",
+            Role = "Doctor",
+            VerificationNumber = "DOC-1001"
         };
 
         var result = await controller.Register(dto);
 
-        Assert.IsType<OkResult>(result);
+        Assert.IsType<OkObjectResult>(result);
 
         Assert.Equal(1, context.Users.Count());
+
+        var user = context.Users.First();
+
+        Assert.Equal("Doctor", user.Role);
+        Assert.True(user.IsVerified);
+    }
+
+    [Fact]
+    public async Task Register_NewStudent_ReturnsOk()
+    {
+        var context = GetDbContext();
+
+        var controller = new AuthController(context);
+
+        var dto = new RegisterDto
+        {
+            Email = "student@test.com",
+            Password = "123456",
+            Role = "Student",
+            VerificationNumber = "ST-2025-001"
+        };
+
+        var result = await controller.Register(dto);
+
+        Assert.IsType<OkObjectResult>(result);
+
+        var user = context.Users.First();
+
+        Assert.Equal("Student", user.Role);
+        Assert.True(user.IsVerified);
     }
 
     [Fact]
@@ -54,7 +87,9 @@ public class AuthControllerTests
         var dto = new RegisterDto
         {
             Email = "test@test.com",
-            Password = "123456"
+            Password = "123456",
+            Role = "Doctor",
+            VerificationNumber = "ST-2025-001"
         };
 
         var result = await controller.Register(dto);
@@ -71,7 +106,10 @@ public class AuthControllerTests
         {
             Email = "test@test.com",
             PasswordHash =
-                BCrypt.Net.BCrypt.HashPassword("123456")
+                BCrypt.Net.BCrypt.HashPassword("123456"),
+
+            Role = "Doctor",
+            IsVerified = true
         });
 
         await context.SaveChangesAsync();
@@ -115,4 +153,72 @@ public class AuthControllerTests
 
         Assert.IsType<UnauthorizedResult>(result);
     }
+
+    [Fact]
+    public async Task Register_InvalidDoctor_NotVerified()
+    {
+        var context = GetDbContext();
+
+        var controller = new AuthController(context);
+
+        var dto = new RegisterDto
+        {
+            Email = "doctor@test.com",
+            Password = "123456",
+            Role = "Doctor",
+            VerificationNumber = "DOC-999999"
+        };
+
+        await controller.Register(dto);
+
+        var user = context.Users.First();
+
+        Assert.False(user.IsVerified);
+    }
+
+    [Fact]
+    public async Task Register_InvalidStudentId_NotVerified()
+    {
+        var context = GetDbContext();
+
+        var controller = new AuthController(context);
+
+        var dto = new RegisterDto
+        {
+            Email = "student@test.com",
+            Password = "123456",
+            Role = "Student",
+            VerificationNumber = "ST-999999"
+        };
+
+        await controller.Register(dto);
+
+        var user = context.Users.First();
+
+        Assert.False(user.IsVerified);
+    }
+
+    [Fact]
+    public async Task Register_InvalidDoctorId_NotVerified()
+    {
+        var context = GetDbContext();
+
+        var controller = new AuthController(context);
+
+        var dto = new RegisterDto
+        {
+            Email = "doctor@test.com",
+            Password = "123456",
+            Role = "Doctor",
+            VerificationNumber = "DOC-999999"
+        };
+
+        await controller.Register(dto);
+
+        var user = context.Users.First();
+
+        Assert.False(user.IsVerified);
+    }
+
+
 }
