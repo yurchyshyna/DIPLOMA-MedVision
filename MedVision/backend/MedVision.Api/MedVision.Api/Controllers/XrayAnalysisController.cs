@@ -26,7 +26,12 @@ public class XrayAnalysisController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<ActionResult<XrayAnalysisResponseDto>> UploadXray(IFormFile file)
+    public async Task<ActionResult<XrayAnalysisResponseDto>> UploadXray(IFormFile file,
+   
+    [FromForm] int userId,
+    [FromForm] string? patientFullName,
+    [FromForm] DateTime? patientBirthDate,
+    [FromForm] string? patientGender)
     {
         if (file == null || file.Length == 0)
         {
@@ -104,6 +109,12 @@ public class XrayAnalysisController : ControllerBase
             HeatmapPath = prediction.HeatmapPath,
             DetectionsJson = detectionsJson,
             PreviewPath = prediction.PreviewPath,
+            UserId = userId,
+            PatientFullName = patientFullName,
+
+            PatientBirthDate = patientBirthDate,
+
+            PatientGender = patientGender,
         };
 
         _context.XrayAnalyses.Add(analysis);
@@ -134,10 +145,12 @@ public class XrayAnalysisController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("history")]
-    public async Task<ActionResult<IEnumerable<XrayAnalysisResponseDto>>> GetHistory()
+    [HttpGet("history/{userId}")]
+    public async Task<ActionResult<IEnumerable<XrayAnalysisResponseDto>>> GetHistory(
+      int userId)
     {
         var analyses = await _context.XrayAnalyses
+            .Where(x => x.UserId == userId)
             .OrderByDescending(x => x.CreatedAt)
             .Select(x => new XrayAnalysisResponseDto
             {
@@ -149,6 +162,11 @@ public class XrayAnalysisController : ControllerBase
                 CreatedAt = x.CreatedAt,
                 HeatmapPath = x.HeatmapPath,
                 DetectionsJson = x.DetectionsJson,
+                PreviewPath = x.PreviewPath,
+
+                PatientFullName = x.PatientFullName,
+                PatientBirthDate = x.PatientBirthDate,
+                PatientGender = x.PatientGender
             })
             .ToListAsync();
 
@@ -191,9 +209,41 @@ public class XrayAnalysisController : ControllerBase
             HeatmapPath = analysis.HeatmapPath,
             DetectionsJson = analysis.DetectionsJson,
 
+            PreviewPath = analysis.PreviewPath,
 
+            PatientFullName = analysis.PatientFullName,
+            PatientBirthDate = analysis.PatientBirthDate,
+            PatientGender = analysis.PatientGender,
         };
 
         return Ok(response);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAnalysis(
+     int id,
+     [FromQuery] int userId)
+    {
+        var analysis = await _context.XrayAnalyses
+            .FindAsync(id);
+
+        if (analysis == null)
+        {
+            return NotFound();
+        }
+
+        if (analysis.UserId != userId)
+        {
+            return Forbid();
+        }
+
+        _context.XrayAnalyses.Remove(analysis);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Аналіз видалено"
+        });
     }
 }

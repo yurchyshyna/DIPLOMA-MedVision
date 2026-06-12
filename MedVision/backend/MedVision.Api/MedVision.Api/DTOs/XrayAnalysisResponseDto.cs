@@ -20,4 +20,10 @@ public class XrayAnalysisResponseDto
 
     public List<DetectionDto> Detections { get; set; } = new();
     public string? PreviewPath { get; set; }
+
+    public string? PatientFullName { get; set; }
+
+    public DateTime? PatientBirthDate { get; set; }
+
+    public string? PatientGender { get; set; }
 }

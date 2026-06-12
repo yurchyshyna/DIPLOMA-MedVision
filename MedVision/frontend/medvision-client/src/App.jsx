@@ -13,6 +13,20 @@ function App() {
   const [history, setHistory] = useState([]);
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [patientFullName, setPatientFullName] =
+    useState("");
+
+  const [selectedPathology, setSelectedPathology] =
+    useState("");
+
+  const [searchTerm, setSearchTerm] =
+    useState("");
+
+  const [patientBirthDate, setPatientBirthDate] =
+    useState("");
+
+  const [patientGender, setPatientGender] =
+    useState("");
 
   const user =
     JSON.parse(
@@ -40,9 +54,17 @@ function App() {
 
   const loadHistory = async () => {
     try {
-      const response = await axios.get(HISTORY_URL);
+
+      const user = JSON.parse(
+        localStorage.getItem("user")
+      );
+
+      const response = await axios.get(
+        `${HISTORY_URL}/${user.id}`
+      );
 
       setHistory(response.data);
+
     } catch (error) {
       console.error(error);
     }
@@ -67,6 +89,38 @@ function App() {
       console.error(error);
 
       alert("Помилка очищення історії.");
+
+    }
+
+  };
+
+  const deleteAnalysis = async (id) => {
+
+    const confirmed = window.confirm(
+      "Видалити цей аналіз?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+
+      const user = JSON.parse(
+        localStorage.getItem("user")
+      );
+
+      await axios.delete(
+        `https://localhost:7281/api/XrayAnalysis/${id}?userId=${user.id}`
+      );
+
+      await loadHistory();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Не вдалося видалити аналіз"
+      );
 
     }
 
@@ -112,7 +166,27 @@ function App() {
 
       formData.append(
         "file",
-        file
+        selectedFile
+      );
+
+      formData.append(
+        "userId",
+        user.id
+      );
+
+      formData.append(
+        "patientFullName",
+        patientFullName
+      );
+
+      formData.append(
+        "patientBirthDate",
+        patientBirthDate
+      );
+
+      formData.append(
+        "patientGender",
+        patientGender
       );
 
       const response = await axios.post(
@@ -156,6 +230,27 @@ function App() {
 
     formData.append("file", selectedFile);
 
+    formData.append(
+      "userId",
+      user.id
+    );
+
+
+    formData.append(
+      "patientFullName",
+      patientFullName
+    );
+
+    formData.append(
+      "patientBirthDate",
+      patientBirthDate
+    );
+
+    formData.append(
+      "patientGender",
+      patientGender
+    );
+
     try {
       setLoading(true);
 
@@ -182,6 +277,30 @@ function App() {
       setLoading(false);
     }
   };
+
+  const filteredHistory =
+    history.filter((item) => {
+
+      const matchesPatient =
+        !searchTerm ||
+        item.patientFullName
+          ?.toLowerCase()
+          .includes(
+            searchTerm.toLowerCase()
+          );
+
+      const matchesPathology =
+        !selectedPathology ||
+        item.detectionsJson?.includes(
+          selectedPathology
+        );
+
+      return (
+        matchesPatient &&
+        matchesPathology
+      );
+
+    });
 
   return (
     <div className="min-vh-100">
@@ -433,6 +552,29 @@ function App() {
 
                       </div>
 
+                      <h5 className="fw-bold mt-4">
+                        Дані пацієнта
+                      </h5>
+
+                      <p>
+                        <strong>ПІБ:</strong>
+                        {selectedAnalysis.patientFullName || "Не вказано"}
+                      </p>
+
+                      <p>
+                        <strong>Дата народження:</strong>
+                        {selectedAnalysis.patientBirthDate
+                          ? new Date(
+                            selectedAnalysis.patientBirthDate
+                          ).toLocaleDateString()
+                          : "Не вказано"}
+                      </p>
+
+                      <p>
+                        <strong>Стать:</strong>
+                        {selectedAnalysis.patientGender || "Не вказано"}
+                      </p>
+
                       {/* DETECTIONS */}
 
                       <h2
@@ -658,6 +800,70 @@ function App() {
 
                 )}
 
+                <div className="mt-4">
+
+                  <label className="form-label fw-semibold">
+                    ПІБ пацієнта
+                  </label>
+
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={patientFullName}
+                    onChange={(e) =>
+                      setPatientFullName(e.target.value)
+                    }
+                    placeholder="Іваненко Петро Сергійович"
+                  />
+
+                </div>
+
+                <div className="mt-3">
+
+                  <label className="form-label fw-semibold">
+                    Дата народження
+                  </label>
+
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={patientBirthDate}
+                    onChange={(e) =>
+                      setPatientBirthDate(e.target.value)
+                    }
+                  />
+
+                </div>
+
+                <div className="mt-3">
+
+                  <label className="form-label fw-semibold">
+                    Стать
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={patientGender}
+                    onChange={(e) =>
+                      setPatientGender(e.target.value)
+                    }
+                  >
+                    <option value="">
+                      Не вказано
+                    </option>
+
+                    <option value="Чоловіча">
+                      Чоловіча
+                    </option>
+
+                    <option value="Жіноча">
+                      Жіноча
+                    </option>
+
+                  </select>
+
+                </div>
+
                 <button
                   className="btn btn-primary w-100 mt-4 py-2 fw-semibold"
                   onClick={handleUpload}
@@ -681,24 +887,6 @@ function App() {
               <div className="card shadow border-0 rounded-4 mt-4">
 
                 <div className="card-body p-4">
-
-                  <div className="d-flex justify-content-between align-items-center mb-4">
-
-                    <h4 className="text-primary mb-0">
-                      Результат аналізу
-                    </h4>
-
-                    <span
-                      className={
-                        result.resultClass === "Abnormal"
-                          ? "badge bg-danger fs-6"
-                          : "badge bg-success fs-6"
-                      }
-                    >
-                      {result.resultClass}
-                    </span>
-
-                  </div>
 
                   <div className="mb-4">
 
@@ -849,6 +1037,52 @@ function App() {
 
                 </div>
 
+                <div className="row mb-4">
+
+                  <div className="col-md-6">
+
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="🔍 Пошук пацієнта"
+                      value={searchTerm}
+                      onChange={(e) =>
+                        setSearchTerm(e.target.value)
+                      }
+                    />
+
+                  </div>
+
+                  <div className="col-md-6">
+
+                    <select
+                      className="form-select"
+                      value={selectedPathology}
+                      onChange={(e) =>
+                        setSelectedPathology(e.target.value)
+                      }
+                    >
+
+                      <option value="Cardiomegaly">Cardiomegaly</option>
+                      <option value="Pleural effusion">Pleural effusion</option>
+                      <option value="Nodule/Mass">Nodule/Mass</option>
+                      <option value="Pneumothorax">Pneumothorax</option>
+                      <option value="Lung Opacity">Lung Opacity</option>
+                      <option value="Consolidation">Consolidation</option>
+                      <option value="Infiltration">Infiltration</option>
+                      <option value="Pulmonary fibrosis">Pulmonary fibrosis</option>
+                      <option value="Pleural thickening">Pleural thickening</option>
+                      <option value="Calcification">Calcification</option>
+                      <option value="Atelectasis">Atelectasis</option>
+                      <option value="ILD">ILD</option>
+                      <option value="Other lesion">Other lesion</option>
+
+                    </select>
+
+                  </div>
+
+                </div>
+
                 {history.length === 0 ? (
 
                   <div className="alert alert-light border">
@@ -868,13 +1102,14 @@ function App() {
                           <th>Дата</th>
                           <th>Клас</th>
                           <th>Ймовірність</th>
+                          <th>Дії</th>
                         </tr>
 
                       </thead>
 
                       <tbody>
 
-                        {history.map((item) => (
+                        {filteredHistory.map((item) => (
 
                           <tr
                             key={item.id}
@@ -890,7 +1125,11 @@ function App() {
                             <td>
 
                               <img
-                                src={`https://localhost:7281${item.imagePath}`}
+                                src={
+                                  item.previewPath
+                                    ? `http://127.0.0.1:8000${item.previewPath}`
+                                    : `https://localhost:7281${item.imagePath}`
+                                }
                                 alt="X-ray"
                                 style={{
                                   width: "70px",
@@ -924,6 +1163,23 @@ function App() {
 
                             <td>
                               {item.probability}%
+                            </td>
+
+                            <td>
+
+                              <button
+                                className="btn btn-outline-danger btn-sm"
+                                onClick={(e) => {
+
+                                  e.stopPropagation();
+
+                                  deleteAnalysis(item.id);
+
+                                }}
+                              >
+                                🗑
+                              </button>
+
                             </td>
 
                           </tr>

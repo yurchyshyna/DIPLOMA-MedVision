@@ -14,5 +14,7 @@ public class AiPredictionResponse
 
     public List<DetectionDto> Detections { get; set; } = new();
 
+
+
    
 }

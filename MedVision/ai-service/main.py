@@ -156,10 +156,10 @@ async def predict(file: UploadFile = File(...)):
 
     is_dicom = extension in [".dcm", ".dicom"]
 
+    preview_path = None
+
     if is_dicom:
         temp_path = convert_dicom_to_png(temp_path)
-
-        preview_path = None
 
         preview_path = f"/predictions/{os.path.basename(temp_path)}"
 
@@ -183,7 +183,9 @@ async def predict(file: UploadFile = File(...)):
 
     if boxes is not None:
         for box in boxes:
+
             class_id = int(box.cls[0])
+
             confidence = float(box.conf[0])
 
             if confidence < current_threshold:
@@ -196,8 +198,7 @@ async def predict(file: UploadFile = File(...)):
                     "className": class_name,
                     "confidence": round(confidence * 100, 2),
                     "description": PATHOLOGY_INFO.get(
-                        class_name,
-                        "Опис патології відсутній.",
+                        class_name, "Опис патології відсутній."
                     ),
                 }
             )
@@ -213,6 +214,5 @@ async def predict(file: UploadFile = File(...)):
         ),
         "detections": detections,
         "heatmapPath": f"/predictions/{predicted_filename}",
-        "previewPath": f"/predictions/{os.path.basename(temp_path)}",
         "previewPath": preview_path,
     }
